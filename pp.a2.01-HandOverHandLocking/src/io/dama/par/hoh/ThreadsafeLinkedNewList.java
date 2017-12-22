@@ -56,10 +56,17 @@ public class ThreadsafeLinkedNewList<T> implements NewList<T> {
     @Override
     public  void add(final T e) {
         final ListElement<T> insert = new ListElement<>(e, null, this.first);
-        if (this.first != null) {
-            this.first.prev = insert;
+        insert.lock.lock();
+        try {
+        	if (this.first != null) {
+   	            this.first.prev = insert;
+   	        }
+   	        this.first = insert;
+        
+        }finally {
+        	insert.lock.unlock();
         }
-        this.first = insert;
+	     
     }
 
     @Override
